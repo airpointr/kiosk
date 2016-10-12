@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>AirPointr - Sample</title>
+<script type="text/javascript" src="js/airpointr.js"></script>
+<script type="text/javascript" src="js/jquery-3.0.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	// create AirPointr object
+	// the optional gesture callback may be used to react on any gesture events such as
+	// pointer and swipes events. In this example, we use the native pointer and swipe
+	// events provides by AirPointr.
+	var airpointr = new AirPointr();
+	airpointr.connect();
+	
+	// register a keydown event handler and show "swipes"
+	$(document).keydown(function(event) {
+		if(event.which === 37) { // left arrow key
+			$('#left').show(complete = function() { $('#left').hide(2500); });
+		} else if(event.which === 39) { // right arrow key
+			$('#right').show(complete = function() { $('#right').hide(2500); });
+		}
+	});
+	
+	// add hover function to all links and make them "clickable" by AirPointr
+	$("a").each(function() {
+		var link = $(this);
+		link.bind('mouseenter', function(evnt) {
+			airpointr.send('{"type": "click", "active": true}');
+		});
+		link.bind('mouseleave', function(evnt) {
+			airpointr.send('{"type": "click", "active": false}');
+		}); 
+	})
+	
+	// when the box was clicked, place it somewhere else and change its color
+	var box = $('#box');
+	box.click(function(evnt) {
+		box.css({
+			left: Math.random() * ($(window).width() - box.width()),
+			top: Math.random() * ($(window).height() - box.height()),
+			'background-color': 'rgb(' + parseInt(Math.random() * 255) + ',' +
+				parseInt(Math.random() * 255) + ',' +
+				parseInt(Math.random() * 255) + ')'
+		});
+	});
+});
+</script>
+<style type="text/css">
+body {
+	padding: 0;
+	margin: 0;
+}
+
+#box {
+	position: absolute;   
+    height: 300px; 
+	width: 300px;    
+    right: 100px;
+	top: 100px; 
+	background: orange;
+}
+
+.swipe {
+	position: fixed;
+	padding: 20pt 20pt 20pt 20pt; 
+	font-size: 256pt;
+	display: none;
+	width: 100%;
+	height: 100%;
+}
+
+#right {
+	right: 0px;
+	bottom: 0px;
+	text-align: right;
+}
+
+#left {
+	left: 0px;
+	bottom: 0px;
+	text-align: left;
+}
+</style> 
+</head>
+<body>
+<h1>AirPointr Sample</h1>
+<div style="width: 600px;">
+<ul>
+  <li><b>Pointer gestures:</b> AirPointr will simulate mouse movement, thus we can use mouse-events such as "hover" to react on pointer gestures. As soon as a clickable object is hovered (in this example the colored box), a click-active-message is sent to AirPointr. AirPointr's overlay will show a click-animation and finally raise a mouse-click-event. If the clickable object looses focus during the click-animation a click-inactive-message is sent, and the animation will be stopped immediately.</li>
+  <li><b>Swipe gestures:</b> Swipes will be simulated by left and right key-press-events. A short animation will be shown in this example.</li>
+</ul>
+</div>
+
+<!-- swipe indicators -->
+<div id="left" class="swipe">&lt;</div>
+<div id="right" class="swipe">&gt;</div>
+
+<!-- clickable box -->
+<a id="box" ></a>
+</body>
+</html>
